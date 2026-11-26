@@ -1,227 +1,185 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#2447b8">
-  <title>Hanshin LMS Alert</title>
-  <style>
-    :root {
-      --blue:#2447b8; --blue2:#4267d5; --ink:#172033; --muted:#68738a;
-      --line:#e7eaf1; --bg:#f5f7fb; --white:#fff; --shadow:0 12px 32px rgba(24,42,88,.08);
-      --green:#16865b; --orange:#bd6a18; --red:#c34b55;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
-    .top{background:linear-gradient(120deg,#1d3693,#315bd0);color:#fff;padding:28px 22px 34px}
-    .wrap{max-width:900px;margin:auto}
-    .brand{font-size:13px;letter-spacing:.12em;opacity:.8;font-weight:700}
-    h1{font-size:28px;margin:10px 0 7px;letter-spacing:-.04em}
-    .sub{margin:0;color:#e2e9ff;font-size:14px;line-height:1.55}
-    main{max-width:900px;margin:-18px auto 50px;padding:0 16px}
-    .panel{background:var(--white);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
-    .statusrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .dot{width:9px;height:9px;border-radius:50%;background:#c28a38;display:inline-block}
-    .status{font-size:14px;font-weight:700}
-    .hint{font-size:12px;color:var(--muted);line-height:1.6;margin:9px 0 0}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-    button{border:0;border-radius:11px;padding:11px 15px;font-weight:700;cursor:pointer;font-size:13px}
-    .primary{background:var(--blue);color:white}
-    .secondary{background:#edf1fc;color:#2447b8}
-    button:disabled{opacity:.5;cursor:wait}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
-    .stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px}
-    .stat b{display:block;font-size:24px;letter-spacing:-.04em}
-    .stat span{font-size:12px;color:var(--muted)}
-    .sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 2px 12px}
-    .sectionhead h2{font-size:17px;margin:0}
-    .filters{display:flex;gap:6px;flex-wrap:wrap}
-    .filter{background:#edf0f6;color:#59647a;padding:8px 11px}
-    .filter.active{background:#e6ecff;color:var(--blue)}
-    .items{display:grid;gap:9px}
-    .item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 16px;display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start}
-    .badge{display:inline-flex;justify-content:center;align-items:center;border-radius:9px;padding:7px 6px;font-size:11px;font-weight:800;background:#eef1f8;color:#58637a}
-    .badge.notice{background:#eaf0ff;color:#3157c5}
-    .badge.material{background:#f1eaff;color:#7850b5}
-    .badge.assignment{background:#fff1e4;color:#b76618}
-    .badge.other{background:#e8f6f0;color:#16865b}
-    .lecture{font-size:12px;color:var(--muted);margin-bottom:5px}
-    .title{font-size:14px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}
-    .date{font-size:11px;color:#8b94a6;margin-top:7px}
-    .empty{padding:34px 16px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #d7ddea;border-radius:14px;font-size:13px;line-height:1.7}
-    .noticebox{border-left:3px solid #d29a42;background:#fff9ed;padding:12px 14px;border-radius:8px;color:#76511f;font-size:12px;line-height:1.65;margin-top:12px}
-    .foot{font-size:11px;color:#8992a4;text-align:center;padding:15px}
-    @media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.top{padding:24px 18px 30px}h1{font-size:25px}.item{grid-template-columns:62px 1fr}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2447b8">
+<title>Hanshin LMS Alert</title>
+<style>
+  :root {
+    --blue:#2447b8; --blue-light:#edf1ff; --bg:#f5f7fb;
+    --text:#172033; --muted:#7b8497; --line:#e8ebf2; --white:#fff;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  }
+  header {
+    background:var(--blue); color:white; padding:28px 20px 34px;
+  }
+  .container { width:min(920px,100% - 32px); margin:0 auto; }
+  .eyebrow { font-size:11px; font-weight:800; letter-spacing:.13em; opacity:.78; }
+  h1 { margin:9px 0 5px; font-size:27px; letter-spacing:-1px; }
+  header p { margin:0; font-size:13px; color:#dfe6ff; }
+  main { margin: -18px auto 40px; }
+  .summary {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px;
+  }
+  .card {
+    background:var(--white); border:1px solid var(--line); border-radius:16px;
+    padding:17px; box-shadow:0 7px 22px rgba(26,43,88,.045);
+  }
+  .card span { color:var(--muted); font-size:12px; }
+  .card strong { display:block; margin-top:7px; font-size:25px; letter-spacing:-1px; }
+  .toolbar {
+    display:flex; justify-content:space-between; align-items:center;
+    gap:12px; margin:0 2px 12px; flex-wrap:wrap;
+  }
+  h2 { margin:0; font-size:18px; letter-spacing:-.5px; }
+  .filters { display:flex; gap:6px; flex-wrap:wrap; }
+  .filter {
+    border:0; background:#e9edf5; color:#667087; padding:8px 12px;
+    border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;
+  }
+  .filter.active { background:var(--blue-light); color:var(--blue); }
+  .list { display:grid; gap:9px; }
+  .item {
+    display:grid; grid-template-columns:68px minmax(0,1fr); gap:13px;
+    padding:16px; background:white; border:1px solid var(--line);
+    border-radius:14px;
+  }
+  .badge {
+    align-self:start; text-align:center; padding:7px 5px; border-radius:8px;
+    font-size:11px; font-weight:800; background:#edf1ff; color:#3157c5;
+  }
+  .badge.material { background:#f1eaff; color:#7850b5; }
+  .badge.assignment { background:#fff0e2; color:#b7681c; }
+  .badge.other { background:#eaf5ef; color:#25835a; }
+  .lecture { color:var(--muted); font-size:12px; margin-bottom:5px; }
+  .title { font-size:14px; line-height:1.5; font-weight:750; overflow-wrap:anywhere; }
+  .date { color:#929bad; font-size:11px; margin-top:7px; }
+  .footer { text-align:center; color:#a0a7b5; font-size:11px; padding:22px 0 0; }
+  .empty {
+    background:white; border:1px dashed #d9deea; border-radius:14px;
+    padding:32px 16px; text-align:center; color:var(--muted); font-size:13px;
+  }
+  @media(max-width:620px) {
+    .summary { grid-template-columns:repeat(2,1fr); }
+    h1 { font-size:24px; }
+    .item { grid-template-columns:60px minmax(0,1fr); padding:14px; }
+    .toolbar { align-items:flex-start; flex-direction:column; }
+  }
+</style>
 </head>
 <body>
-  <header class="top">
-    <div class="wrap">
-      <div class="brand">HANSHIN UNIVERSITY · PERSONAL TOOL</div>
-      <h1>Hanshin LMS Alert</h1>
-      <p class="sub">공지 · 강의자료 · 과제 · 학습활동을 한 화면에서 확인하는 대시보드</p>
+<header>
+  <div class="container">
+    <div class="eyebrow">HANSHIN UNIVERSITY</div>
+    <h1>Hanshin LMS Alert</h1>
+    <p>강의 공지와 학습활동을 한눈에 확인하세요.</p>
+  </div>
+</header>
+
+<main class="container">
+  <section class="summary" aria-label="학습활동 요약">
+    <div class="card"><span>전체 학습활동</span><strong>11</strong></div>
+    <div class="card"><span>공지사항</span><strong>8</strong></div>
+    <div class="card"><span>강의자료</span><strong>3</strong></div>
+    <div class="card"><span>과제</span><strong>0</strong></div>
+  </section>
+
+  <div class="toolbar">
+    <h2>최근 학습활동</h2>
+    <div class="filters" role="group" aria-label="활동 유형 필터">
+      <button class="filter active" data-filter="all">전체</button>
+      <button class="filter" data-filter="notice">공지</button>
+      <button class="filter" data-filter="material">자료실</button>
+      <button class="filter" data-filter="assignment">과제</button>
+      <button class="filter" data-filter="other">기타</button>
     </div>
-  </header>
+  </div>
 
-  <main>
-    <section class="panel">
-      <div class="statusrow"><span class="dot" id="statusDot"></span><span class="status" id="statusText">LMS 연결 확인 전</span></div>
-      <p class="hint" id="statusHint">LMS 데이터를 가져오려면 한신대 LMS에 로그인된 브라우저 세션이 필요합니다. 아래 연결 테스트를 눌러 확인하세요.</p>
-      <div class="actions">
-        <button class="primary" id="loadBtn">학습활동 불러오기</button>
-        <button class="secondary" id="openBtn">한신대 LMS 열기</button>
+  <section class="list" id="activityList">
+    <article class="item" data-kind="notice">
+      <span class="badge">공지</span>
+      <div>
+        <div class="lecture">[2026-2학기] AI·SW수학 (F반)</div>
+        <div class="title">조교모집 1명</div>
+        <div class="date">등록일: 2026.09.07 16:10</div>
       </div>
-      <div class="noticebox">
-        <b>브라우저 보안 제한 안내</b><br>
-        이 페이지는 GitHub Pages 등 별도 도메인에서 실행됩니다. LMS를 숨겨진 iframe에 로그인시키더라도 브라우저의 교차 출처 정책(CORS)과 서드파티 쿠키 제한 때문에 로그인 세션이나 응답 HTML을 읽지 못할 수 있습니다. 이 페이지는 실제 연결을 시도하고 실패 원인을 표시하지만, iframe만으로 우회하지는 않습니다.
+    </article>
+    <article class="item" data-kind="material">
+      <span class="badge material">자료실</span>
+      <div>
+        <div class="lecture">[2026-2학기] 경제생활과법 (A반)</div>
+        <div class="title">제4주차 강의자료</div>
+        <div class="date">종료시한: 2026.09.20 14:06</div>
       </div>
-    </section>
-
-    <section class="stats" aria-label="활동 요약">
-      <div class="stat"><b id="totalCount">–</b><span>전체 활동</span></div>
-      <div class="stat"><b id="noticeCount">–</b><span>공지</span></div>
-      <div class="stat"><b id="materialCount">–</b><span>자료실</span></div>
-      <div class="stat"><b id="assignmentCount">–</b><span>과제</span></div>
-    </section>
-
-    <div class="sectionhead">
-      <h2>최근 학습활동</h2>
-      <div class="filters">
-        <button class="filter active" data-filter="all">전체</button>
-        <button class="filter" data-filter="notice">공지</button>
-        <button class="filter" data-filter="material">자료</button>
-        <button class="filter" data-filter="assignment">과제</button>
-        <button class="filter" data-filter="other">기타</button>
+    </article>
+    <article class="item" data-kind="notice">
+      <span class="badge">공지</span>
+      <div>
+        <div class="lecture">[2026-2학기] 전공체험 오픈클래스 (01반)</div>
+        <div class="title">[전공설계지원센터 비교과] 2026학년도 오픈클래스 「전공 문지기 강의」안내</div>
+        <div class="date">등록일: 2026.09.28 09:44</div>
       </div>
-    </div>
-    <section class="items" id="items">
-      <div class="empty">아직 불러온 학습활동이 없습니다.<br>위의 <b>학습활동 불러오기</b>를 눌러 연결을 테스트하세요.</div>
-    </section>
-    <div class="foot">Hanshin LMS Alert · 개인용 대시보드 프로토타입</div>
-  </main>
+    </article>
+    <article class="item" data-kind="notice">
+      <span class="badge">공지</span>
+      <div>
+        <div class="lecture">[2026-2학기] AI아트코딩과윤리 (B2반)</div>
+        <div class="title">[음악 콘텐츠 생성] Gemini의 Lyria 실습, 음원 다운로드 안내</div>
+        <div class="date">등록일: 2026.10.13 19:22</div>
+      </div>
+    </article>
+    <article class="item" data-kind="notice">
+      <span class="badge">공지</span>
+      <div>
+        <div class="lecture">[2026-2학기] AI아트코딩과윤리 (B2반)</div>
+        <div class="title">[공지] 10/20 휴강</div>
+        <div class="date">등록일: 2026.10.20 11:34</div>
+      </div>
+    </article>
+    <article class="item" data-kind="material">
+      <span class="badge material">자료실</span>
+      <div>
+        <div class="lecture">[2026-2학기] AI·SW수학 (F반)</div>
+        <div class="title">6장 선형변환</div>
+        <div class="date">종료시한: 2026.11.19 10:32</div>
+      </div>
+    </article>
+    <article class="item" data-kind="material">
+      <span class="badge material">자료실</span>
+      <div>
+        <div class="lecture">[2026-2학기] 경제생활과법 (A반)</div>
+        <div class="title">제13-14주차 강의자료</div>
+        <div class="date">종료시한: 2026.11.21 20:03</div>
+      </div>
+    </article>
+    <article class="item" data-kind="notice">
+      <span class="badge">공지</span>
+      <div>
+        <div class="lecture">[2026-연단위운영] 대학생활길잡이공통D (01반)</div>
+        <div class="title">[대학생활길잡이] 온라인 전공설명회 &amp; 전공탐색박람회</div>
+        <div class="date">등록일: 2026.03.17 09:43</div>
+      </div>
+    </article>
+  </section>
+  <div class="footer">Hanshin LMS Alert · 화면 구성 프로토타입</div>
+</main>
 
-  <!-- LMS 화면은 표시하지 않는다. 단, 숨긴 iframe 로그인/데이터 접근이 보장되는 것은 아니다. -->
-  <iframe id="lmsFrame" title="LMS session frame" src="https://lms.hs.ac.kr/main/MainView.dunet#main"
-          aria-hidden="true" tabindex="-1"
-          style="position:absolute;width:1px;height:1px;left:-10000px;top:-10000px;border:0"></iframe>
-
-  <script>
-    const LMS_URL = "https://lms.hs.ac.kr/main/MainView.dunet#main";
-    const TODO_URL = "https://lms.hs.ac.kr/lms/myLecture/doTodoList.dunet";
-    let activities = [];
-    let currentFilter = "all";
-
-    const $ = (id) => document.getElementById(id);
-    const setStatus = (text, hint, color="#c28a38") => {
-      $("statusText").textContent = text;
-      $("statusHint").textContent = hint;
-      $("statusDot").style.background = color;
-    };
-
-    function classify(category, row) {
-      const value = (category + " " + row).toLowerCase();
-      if (value.includes("공지")) return "notice";
-      if (value.includes("자료")) return "material";
-      if (value.includes("과제")) return "assignment";
-      return "other";
-    }
-
-    function parseTodoHtml(html) {
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      return [...doc.querySelectorAll(".todolist_pop li")].map((li) => {
-        const category = li.querySelector(".cata")?.textContent.trim() || "기타";
-        const lecture = li.querySelector(".lec_name")?.textContent.trim() || "강의명 미확인";
-        const title = li.querySelector(".subject")?.textContent.replace(/\s+/g, " ").trim() || "제목 미확인";
-        const date = li.querySelector(".date")?.textContent.replace(/\s+/g, " ").trim() || "";
-        const link = li.querySelector("a")?.getAttribute("href") || "";
-        return { category, lecture, title, date, kind: classify(category, title), link };
-      });
-    }
-
-    function render() {
-      const counts = {
-        total: activities.length,
-        notice: activities.filter(x => x.kind === "notice").length,
-        material: activities.filter(x => x.kind === "material").length,
-        assignment: activities.filter(x => x.kind === "assignment").length
-      };
-      $("totalCount").textContent = counts.total;
-      $("noticeCount").textContent = counts.notice;
-      $("materialCount").textContent = counts.material;
-      $("assignmentCount").textContent = counts.assignment;
-
-      const shown = activities.filter(x => currentFilter === "all" || x.kind === currentFilter);
-      if (!shown.length) {
-        $("items").innerHTML = `<div class="empty">${activities.length ? "선택한 유형의 학습활동이 없습니다." : "표시할 학습활동이 없습니다."}</div>`;
-        return;
-      }
-      $("items").innerHTML = shown.map(x => `
-        <article class="item">
-          <span class="badge ${x.kind}">${escapeHtml(x.category)}</span>
-          <div>
-            <div class="lecture">${escapeHtml(x.lecture)}</div>
-            <div class="title">${escapeHtml(x.title)}</div>
-            <div class="date">${escapeHtml(x.date)}</div>
-          </div>
-        </article>`).join("");
-    }
-
-    function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, ch => ({
-        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-      })[ch]);
-    }
-
-    async function loadActivities() {
-      const btn = $("loadBtn");
-      btn.disabled = true;
-      btn.textContent = "연결 확인 중…";
-      setStatus("LMS 데이터 요청 중", "로그인 세션과 브라우저의 CORS 허용 여부를 확인하고 있습니다.");
-      try {
-        const response = await fetch(TODO_URL, {
-          method: "POST",
-          mode: "cors",
-          credentials: "include",
-          headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-          body: new URLSearchParams({ to_do_type: "proceedable" }).toString()
-        });
-        if (!response.ok) throw new Error(`LMS 서버 응답: HTTP ${response.status}`);
-        const contentType = response.headers.get("content-type") || "";
-        if (!contentType.toLowerCase().includes("text/html")) {
-          throw new Error(`예상하지 못한 응답 형식: ${contentType || "Content-Type 없음"}`);
-        }
-        const html = await response.text();
-        const parsed = parseTodoHtml(html);
-        if (!parsed.length) {
-          setStatus("응답은 받았지만 활동을 찾지 못했습니다", "로그인 화면 또는 다른 HTML이 반환됐을 수 있습니다. LMS에 로그인한 뒤 다시 시도해 주세요.", "#c28a38");
-          activities = [];
-          render();
-          return;
-        }
-        activities = parsed;
-        render();
-        setStatus(`연결 성공 · ${parsed.length}개 활동 확인`, "현재 진행 가능한 학습활동을 불러왔습니다.", "#16865b");
-      } catch (error) {
-        const msg = error instanceof TypeError
-          ? "브라우저가 LMS 응답을 차단했습니다. 교차 출처 CORS 또는 서드파티 쿠키 제한일 가능성이 큽니다."
-          : error.message;
-        setStatus("자동 데이터 연결에 실패했습니다", msg + " 숨겨진 iframe만으로는 이 보안 제한을 해결할 수 없습니다.", "#c34b55");
-        console.error("[Hanshin LMS Alert]", error);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "학습활동 불러오기";
-      }
-    }
-
-    $("loadBtn").addEventListener("click", loadActivities);
-    $("openBtn").addEventListener("click", () => window.open(LMS_URL, "_blank", "noopener"));
-    document.querySelectorAll(".filter").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".filter").forEach(b => b.classList.toggle("active", b === btn));
-        currentFilter = btn.dataset.filter;
-        render();
+<script>
+  document.querySelectorAll(".filter").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".filter").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      const filter = button.dataset.filter;
+      document.querySelectorAll("#activityList .item").forEach(item => {
+        item.hidden = filter !== "all" && item.dataset.kind !== filter;
       });
     });
-  </script>
+  });
+</script>
 </body>
 </html>
