@@ -2,184 +2,258 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#2447b8">
-<title>Hanshin LMS Alert</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Hanshin LMS 실시간 알림</title>
 <style>
-  :root {
-    --blue:#2447b8; --blue-light:#edf1ff; --bg:#f5f7fb;
-    --text:#172033; --muted:#7b8497; --line:#e8ebf2; --white:#fff;
-  }
-  * { box-sizing:border-box; }
-  body {
-    margin:0; background:var(--bg); color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-  }
-  header {
-    background:var(--blue); color:white; padding:28px 20px 34px;
-  }
-  .container { width:min(920px,100% - 32px); margin:0 auto; }
-  .eyebrow { font-size:11px; font-weight:800; letter-spacing:.13em; opacity:.78; }
-  h1 { margin:9px 0 5px; font-size:27px; letter-spacing:-1px; }
-  header p { margin:0; font-size:13px; color:#dfe6ff; }
-  main { margin: -18px auto 40px; }
-  .summary {
-    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px;
-  }
-  .card {
-    background:var(--white); border:1px solid var(--line); border-radius:16px;
-    padding:17px; box-shadow:0 7px 22px rgba(26,43,88,.045);
-  }
-  .card span { color:var(--muted); font-size:12px; }
-  .card strong { display:block; margin-top:7px; font-size:25px; letter-spacing:-1px; }
-  .toolbar {
-    display:flex; justify-content:space-between; align-items:center;
-    gap:12px; margin:0 2px 12px; flex-wrap:wrap;
-  }
-  h2 { margin:0; font-size:18px; letter-spacing:-.5px; }
-  .filters { display:flex; gap:6px; flex-wrap:wrap; }
-  .filter {
-    border:0; background:#e9edf5; color:#667087; padding:8px 12px;
-    border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;
-  }
-  .filter.active { background:var(--blue-light); color:var(--blue); }
-  .list { display:grid; gap:9px; }
-  .item {
-    display:grid; grid-template-columns:68px minmax(0,1fr); gap:13px;
-    padding:16px; background:white; border:1px solid var(--line);
-    border-radius:14px;
-  }
-  .badge {
-    align-self:start; text-align:center; padding:7px 5px; border-radius:8px;
-    font-size:11px; font-weight:800; background:#edf1ff; color:#3157c5;
-  }
-  .badge.material { background:#f1eaff; color:#7850b5; }
-  .badge.assignment { background:#fff0e2; color:#b7681c; }
-  .badge.other { background:#eaf5ef; color:#25835a; }
-  .lecture { color:var(--muted); font-size:12px; margin-bottom:5px; }
-  .title { font-size:14px; line-height:1.5; font-weight:750; overflow-wrap:anywhere; }
-  .date { color:#929bad; font-size:11px; margin-top:7px; }
-  .footer { text-align:center; color:#a0a7b5; font-size:11px; padding:22px 0 0; }
-  .empty {
-    background:white; border:1px dashed #d9deea; border-radius:14px;
-    padding:32px 16px; text-align:center; color:var(--muted); font-size:13px;
-  }
-  @media(max-width:620px) {
-    .summary { grid-template-columns:repeat(2,1fr); }
-    h1 { font-size:24px; }
-    .item { grid-template-columns:60px minmax(0,1fr); padding:14px; }
-    .toolbar { align-items:flex-start; flex-direction:column; }
-  }
+:root{--blue:#315efb;--ink:#171923;--muted:#7b8190;--line:#e9ebf0;--bg:#f7f8fa;--green:#15966a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:960px;margin:0 auto;padding:34px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.logo{font-size:23px;font-weight:850;letter-spacing:-1px}.logo span{color:var(--blue)}
+.live{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:750;color:var(--green)}
+.dot{width:8px;height:8px;border-radius:50%;background:#20bd83;box-shadow:0 0 0 4px #20bd8320}
+.hero,.stat,.item{background:#fff;border:1px solid var(--line);border-radius:18px}
+.hero{padding:27px}
+.kicker{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.12em}
+h1{font-size:30px;letter-spacing:-1.2px;margin:10px 0 7px}
+.desc{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:20px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 14px;font-size:12px;font-weight:750}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+#status{font-size:12px;color:var(--muted);margin-left:auto}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:14px 0 28px}
+.stat{padding:16px 18px}.stat strong{display:block;font-size:25px;letter-spacing:-1px}.stat small{font-size:11px;color:var(--muted)}
+.section{display:flex;justify-content:space-between;align-items:end;margin:0 2px 13px}
+.section h2{font-size:18px;margin:0}.section span{font-size:11px;color:var(--muted)}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{border-radius:99px;padding:8px 12px}.filters button.active{background:#eaf0ff;color:var(--blue);border-color:#d9e3ff}
+.list{display:grid;gap:9px}
+.item{padding:16px 17px;display:grid;grid-template-columns:75px minmax(0,1fr) auto;gap:13px;align-items:center}
+.badge{font-size:10px;font-weight:800;color:#596170;background:#f0f2f6;padding:7px 8px;border-radius:8px;justify-self:start;white-space:nowrap}
+.item h3{font-size:14px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere}
+.meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:11px}
+.date{font-size:11px;color:var(--muted);white-space:nowrap;text-align:right}
+.empty{background:#fff;border:1px dashed #d9dde5;border-radius:16px;text-align:center;padding:40px 16px;color:var(--muted);font-size:13px;line-height:1.8}
+.notice{margin-top:18px;padding:13px 15px;background:#eef2ff;border-radius:12px;color:#52618e;font-size:11px;line-height:1.7}
+.toast{position:fixed;right:18px;bottom:18px;max-width:calc(100vw - 36px);background:#171923;color:#fff;padding:13px 16px;border-radius:12px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;box-shadow:0 12px 30px #0002}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:620px){main{padding:22px 13px 42px}.hero{padding:21px}h1{font-size:25px}.stats{gap:7px}.stat{padding:13px}.stat strong{font-size:21px}.item{grid-template-columns:1fr;gap:8px}.date{text-align:left}#status{width:100%;margin:0}}
 </style>
 </head>
 <body>
+<main>
 <header>
-  <div class="container">
-    <div class="eyebrow">HANSHIN UNIVERSITY</div>
-    <h1>Hanshin LMS Alert</h1>
-    <p>강의 공지와 학습활동을 한눈에 확인하세요.</p>
-  </div>
+  <div class="logo">Hanshin <span>LMS</span> Alert</div>
+  <div class="live"><i class="dot"></i> LIVE</div>
 </header>
 
-<main class="container">
-  <section class="summary" aria-label="학습활동 요약">
-    <div class="card"><span>전체 학습활동</span><strong>11</strong></div>
-    <div class="card"><span>공지사항</span><strong>8</strong></div>
-    <div class="card"><span>강의자료</span><strong>3</strong></div>
-    <div class="card"><span>과제</span><strong>0</strong></div>
-  </section>
-
-  <div class="toolbar">
-    <h2>최근 학습활동</h2>
-    <div class="filters" role="group" aria-label="활동 유형 필터">
-      <button class="filter active" data-filter="all">전체</button>
-      <button class="filter" data-filter="notice">공지</button>
-      <button class="filter" data-filter="material">자료실</button>
-      <button class="filter" data-filter="assignment">과제</button>
-      <button class="filter" data-filter="other">기타</button>
-    </div>
+<section class="hero">
+  <div class="kicker">HANSHIN UNIVERSITY · LMS MONITOR</div>
+  <h1>실시간 학습 알림</h1>
+  <p class="desc">한신대 LMS의 진행 가능한 학습 항목을 불러옵니다.<br>새 공지나 학습 항목이 감지되면 이 화면에 표시됩니다.</p>
+  <div class="controls">
+    <button class="primary" id="refresh">지금 확인</button>
+    <button id="toggle">자동 새로고침 중지</button>
+    <span id="status">LMS 연결 확인 중…</span>
   </div>
+</section>
 
-  <section class="list" id="activityList">
-    <article class="item" data-kind="notice">
-      <span class="badge">공지</span>
-      <div>
-        <div class="lecture">[2026-2학기] AI·SW수학 (F반)</div>
-        <div class="title">조교모집 1명</div>
-        <div class="date">등록일: 2026.09.07 16:10</div>
-      </div>
-    </article>
-    <article class="item" data-kind="material">
-      <span class="badge material">자료실</span>
-      <div>
-        <div class="lecture">[2026-2학기] 경제생활과법 (A반)</div>
-        <div class="title">제4주차 강의자료</div>
-        <div class="date">종료시한: 2026.09.20 14:06</div>
-      </div>
-    </article>
-    <article class="item" data-kind="notice">
-      <span class="badge">공지</span>
-      <div>
-        <div class="lecture">[2026-2학기] 전공체험 오픈클래스 (01반)</div>
-        <div class="title">[전공설계지원센터 비교과] 2026학년도 오픈클래스 「전공 문지기 강의」안내</div>
-        <div class="date">등록일: 2026.09.28 09:44</div>
-      </div>
-    </article>
-    <article class="item" data-kind="notice">
-      <span class="badge">공지</span>
-      <div>
-        <div class="lecture">[2026-2학기] AI아트코딩과윤리 (B2반)</div>
-        <div class="title">[음악 콘텐츠 생성] Gemini의 Lyria 실습, 음원 다운로드 안내</div>
-        <div class="date">등록일: 2026.10.13 19:22</div>
-      </div>
-    </article>
-    <article class="item" data-kind="notice">
-      <span class="badge">공지</span>
-      <div>
-        <div class="lecture">[2026-2학기] AI아트코딩과윤리 (B2반)</div>
-        <div class="title">[공지] 10/20 휴강</div>
-        <div class="date">등록일: 2026.10.20 11:34</div>
-      </div>
-    </article>
-    <article class="item" data-kind="material">
-      <span class="badge material">자료실</span>
-      <div>
-        <div class="lecture">[2026-2학기] AI·SW수학 (F반)</div>
-        <div class="title">6장 선형변환</div>
-        <div class="date">종료시한: 2026.11.19 10:32</div>
-      </div>
-    </article>
-    <article class="item" data-kind="material">
-      <span class="badge material">자료실</span>
-      <div>
-        <div class="lecture">[2026-2학기] 경제생활과법 (A반)</div>
-        <div class="title">제13-14주차 강의자료</div>
-        <div class="date">종료시한: 2026.11.21 20:03</div>
-      </div>
-    </article>
-    <article class="item" data-kind="notice">
-      <span class="badge">공지</span>
-      <div>
-        <div class="lecture">[2026-연단위운영] 대학생활길잡이공통D (01반)</div>
-        <div class="title">[대학생활길잡이] 온라인 전공설명회 &amp; 전공탐색박람회</div>
-        <div class="date">등록일: 2026.03.17 09:43</div>
-      </div>
-    </article>
-  </section>
-  <div class="footer">Hanshin LMS Alert · 화면 구성 프로토타입</div>
+<section class="stats">
+  <div class="stat"><strong id="count">-</strong><small>진행 가능한 항목</small></div>
+  <div class="stat"><strong id="newCount">0</strong><small>이번 실행 중 새로 발견</small></div>
+  <div class="stat"><strong id="lastUpdate">-</strong><small>마지막 확인</small></div>
+</section>
+
+<div class="section"><h2>학습 활동</h2><span id="intervalLabel">30초마다 자동 확인</span></div>
+<nav class="filters" id="filters">
+  <button class="active" data-filter="전체">전체</button>
+  <button data-filter="공지">공지</button>
+  <button data-filter="자료실">자료실</button>
+  <button data-filter="과제">과제</button>
+  <button data-filter="토론">토론</button>
+  <button data-filter="기타">기타</button>
+</nav>
+<section class="list" id="list">
+  <div class="empty">LMS에서 데이터를 불러오는 중입니다.</div>
+</section>
+<div class="notice">
+  데이터는 현재 LMS의 <b>doTodoList.dunet</b> 요청에서 <b>proceedable</b> 항목을 읽습니다.
+  이 HTML은 LMS와 같은 출처(origin)에서 실행되어야 합니다. GitHub Pages나 로컬 파일에서 열면 브라우저의 동일 출처 정책 때문에 LMS 로그인 데이터를 읽을 수 없습니다.
+</div>
 </main>
+<div class="toast" id="toast"></div>
 
 <script>
-  document.querySelectorAll(".filter").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".filter").forEach(item => item.classList.remove("active"));
-      button.classList.add("active");
-      const filter = button.dataset.filter;
-      document.querySelectorAll("#activityList .item").forEach(item => {
-        item.hidden = filter !== "all" && item.dataset.kind !== filter;
+(() => {
+  'use strict';
+
+  // LMS 내부 페이지와 같은 출처에서 실행되어야 합니다.
+  const ENDPOINT = '/lms/myLecture/doTodoList.dunet';
+  const POLL_MS = 30000;
+
+  const $ = id => document.getElementById(id);
+  let timer = null;
+  let running = true;
+  let currentFilter = '전체';
+  let previousKeys = new Set();
+  let hasInitialData = false;
+  let newItems = 0;
+  let latestItems = [];
+
+  function showToast(message) {
+    const el = $('toast');
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[ch]);
+  }
+
+  function getCategoryGroup(category) {
+    if (category.includes('공지')) return '공지';
+    if (category.includes('자료')) return '자료실';
+    if (category.includes('과제')) return '과제';
+    if (category.includes('토론')) return '토론';
+    return '기타';
+  }
+
+  function makeKey(item) {
+    return [item.category, item.lecture, item.title, item.date].join('|');
+  }
+
+  function render() {
+    const filtered = latestItems.filter(item =>
+      currentFilter === '전체' || getCategoryGroup(item.category) === currentFilter
+    );
+
+    if (!filtered.length) {
+      $('list').innerHTML = '<div class="empty">표시할 학습 항목이 없습니다.</div>';
+      return;
+    }
+
+    $('list').innerHTML = filtered.map(item => `
+      <article class="item">
+        <span class="badge">${escapeHTML(item.category)}</span>
+        <div>
+          <h3>${escapeHTML(item.title)}${item.isNew ? '<span style="color:#d65a25;font-size:10px;margin-left:7px">NEW</span>' : ''}</h3>
+          <div class="meta">
+            <span>${escapeHTML(item.lecture)}</span>
+          </div>
+        </div>
+        <div class="date">${escapeHTML(item.date || '일정 정보 없음')}</div>
+      </article>
+    `).join('');
+  }
+
+  async function fetchActivities() {
+    if (location.hostname !== 'lms.hs.ac.kr') {
+      $('status').textContent = 'LMS 내부에서 실행해야 합니다.';
+      $('list').innerHTML = '<div class="empty">이 HTML은 lms.hs.ac.kr에서 실행해야 로그인된 LMS 데이터를 읽을 수 있습니다.<br>GitHub Pages나 로컬 파일에서는 직접 연결할 수 없습니다.</div>';
+      stopPolling();
+      return;
+    }
+
+    $('status').textContent = 'LMS 데이터 확인 중…';
+    $('refresh').disabled = true;
+
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: new URLSearchParams({ to_do_type: 'proceedable' }),
+        cache: 'no-store'
       });
-    });
+
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('로그인이 만료됐습니다. LMS에 다시 로그인해 주세요.');
+      }
+      if (!response.ok) throw new Error('LMS 요청 실패 (' + response.status + ')');
+
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const parsed = [...doc.querySelectorAll('.todolist_pop li')].map(li => ({
+        category: li.querySelector('.cata')?.innerText.trim() || '기타',
+        lecture: li.querySelector('.lec_name')?.innerText.trim() || '강의명 미상',
+        title: li.querySelector('.subject')?.innerText.trim() || '제목 없음',
+        date: li.querySelector('.date')?.innerText.trim() || ''
+      })).filter(item => item.title !== '제목 없음' || item.lecture !== '강의명 미상');
+
+      const currentKeys = new Set(parsed.map(makeKey));
+      let added = [];
+
+      if (hasInitialData) {
+        added = parsed.filter(item => !previousKeys.has(makeKey(item)));
+        if (added.length) {
+          newItems += added.length;
+          showToast(`새 학습 항목 ${added.length}개가 감지됐습니다.`);
+        }
+      }
+
+      latestItems = parsed.map(item => ({
+        ...item,
+        isNew: added.some(x => makeKey(x) === makeKey(item))
+      }));
+      previousKeys = currentKeys;
+      hasInitialData = true;
+
+      $('count').textContent = parsed.length;
+      $('newCount').textContent = newItems;
+      $('lastUpdate').textContent = new Date().toLocaleTimeString('ko-KR', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      $('status').textContent = 'LMS 연결됨';
+      render();
+    } catch (error) {
+      $('status').textContent = error.message || '데이터를 불러오지 못했습니다.';
+      if (!hasInitialData) {
+        $('list').innerHTML = `<div class="empty">${escapeHTML(error.message)}<br>로그인 상태와 LMS 페이지 주소를 확인해 주세요.</div>`;
+      }
+    } finally {
+      $('refresh').disabled = false;
+    }
+  }
+
+  function startPolling() {
+    stopPolling();
+    running = true;
+    $('toggle').textContent = '자동 새로고침 중지';
+    $('intervalLabel').textContent = '30초마다 자동 확인';
+    fetchActivities();
+    timer = setInterval(fetchActivities, POLL_MS);
+  }
+
+  function stopPolling() {
+    if (timer) clearInterval(timer);
+    timer = null;
+    running = false;
+    $('toggle').textContent = '자동 새로고침 시작';
+    $('intervalLabel').textContent = '자동 확인 중지됨';
+  }
+
+  $('refresh').addEventListener('click', fetchActivities);
+  $('toggle').addEventListener('click', () => running ? stopPolling() : startPolling());
+  $('filters').addEventListener('click', event => {
+    const button = event.target.closest('button[data-filter]');
+    if (!button) return;
+    currentFilter = button.dataset.filter;
+    document.querySelectorAll('.filters button').forEach(el =>
+      el.classList.toggle('active', el === button)
+    );
+    render();
   });
+
+  startPolling();
+})();
 </script>
 </body>
 </html>
