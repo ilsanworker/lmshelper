@@ -1,17 +1,33 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Hanshin LMS Helper</title>
+<meta charset="UTF-8">
+<title>LMS Access Test</title>
 </head>
 <body>
-  <h1>Hanshin LMS</h1>
 
-  <iframe
+<h2>Hanshin LMS Access Test</h2>
+
+<iframe
+    id="lms"
     src="https://lms.hs.ac.kr/main/MainView.dunet#main"
     width="100%"
-    height="850"
-    frameborder="0">
-  </iframe>
+    height="800">
+</iframe>
+
+<script>
+const iframe = document.getElementById("lms");
+
+iframe.onload = () => {
+    try {
+        const doc = iframe.contentDocument;
+        console.log("접근 성공:", doc.title);
+        console.log("HTML:", doc.body.innerText);
+    } catch (error) {
+        console.error("접근 차단:", error.message);
+    }
+};
+</script>
+
 </body>
 </html>
